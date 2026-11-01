@@ -1,0 +1,92 @@
+include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <semaphore.h>
+#define NUM
+_
+THREADS 5
+int shared
+_
+resource = 0;
+sem
+_
+t semaphore;
+void *thread
+_
+function(void *arg) {
+int thread
+_
+id = *((int *)arg);
+sem
+_
+wait(&semaphore);
+printf("Thread %d accessing shared resource.\n"
+, thread
+_
+id);
+shared
+_
+resource++;
+printf("Shared resource value incremented to: %d\n"
+, shared
+_
+resource);
+sem
+_post(&semaphore);
+pthread
+_
+exit(NULL);
+}
+int main() {
+pthread
+_
+t threads[NUM
+_
+THREADS];
+int thread
+_
+ids[NUM
+_
+THREADS];
+sem
+_
+init(&semaphore, 0, 1);
+for (int i = 0; i < NUM
+_
+THREADS; i++) {
+thread
+_
+ids[i] = i + 1;
+if (pthread
+_
+create(&threads[i], NULL, thread
+_
+function, (void *)&thread
+_
+ids[i]) != 0) {
+fprintf(stderr,
+"Error creating thread %d\n"
+, i);
+exit(EXIT
+_
+FAILURE);
+}
+}
+for (int i = 0; i < NUM
+_
+THREADS; i++) {
+if (pthread
+_join(threads[i], NULL) != 0) {
+fprintf(stderr,
+"Error joining thread %d\n"
+, i);
+exit(EXIT
+_
+FAILURE);
+}
+}
+sem
+_
+destroy(&semaphore);
+return 0;
+}
