@@ -1,0 +1,154 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<unistd.h>
+#include<sys/wait.h>
+void create
+_
+zombie
+_process(){
+pid
+_
+t pid =fork();
+if(pid==-1){
+perror("fork");
+exit(EXIT
+_
+FAILURE);
+}
+else if(pid>0){
+printf("Parent process created a zombie process(PID:%d)\n"
+,pid);
+}
+else{
+printf("Zombie process created(PID:%d)\n"
+,getpid());
+exit(EXIT
+_
+SUCCESS);
+}
+}
+void prevent
+_
+zombie
+_processes(){
+pid
+_
+t pid=fork();
+if(pid==-1){
+perror("fork");
+exit(EXIT
+_
+FAILURE);
+} else if(pid>0){
+printf("Parent process created a child process(PID:%d)\n"
+,pid);
+sleep(2);
+}
+else{
+pid=fork();
+Soorya Kiran
+1NT24IS222
+if(pid==-1){
+perror("fork");
+exit(EXIT
+_
+FAILURE);
+}
+else if(pid>0){
+printf("First child process(PID:%d)exited\n"
+,getpid());
+exit(EXIT
+_
+SUCCESS);
+}
+else{
+printf("Grandchild process(PID:%d)\n"
+,getpid());
+sleep(5);
+printf("Grandchild process completed\n");
+exit(EXIT
+_
+SUCCESS);
+}
+}
+}
+void create
+_
+orphan
+_process(){
+pid
+_
+t pid=fork();
+if(pid==-1){
+perror("fork");
+exit(EXIT
+_
+FAILURE);
+}
+else if(pid>0){
+printf("Parent process (PID:%d)\n"
+,getpid());
+sleep(2);
+}
+else{
+printf("Orphan process created (PID:%d)\n"
+,getpid());
+sleep(5);
+printf("Orphan process completed\n");
+exit(EXIT
+_
+SUCCESS);
+}
+}
+void parent
+_
+child
+_
+scenario(){
+pid
+_
+t pid=fork();
+if(pid==-1){
+perror("fork");
+exit(EXIT
+_
+FAILURE);
+} else if(pid>0){
+printf("Parent process(PID:%d)\n"
+,getpid());
+wait(NULL);
+}
+else{
+printf("Child process(PID:%d)\n"
+,getpid());
+exit(EXIT
+_
+SUCCESS);
+}
+}
+int main(){
+printf("Demonstrating Zombie process:\n");
+create
+_
+zombie
+_process();
+sleep(5);
+printf("\nPreventing Zombie processes:\n");
+prevent
+_
+zombie
+_processes();
+sleep(7);
+printf("\nCreating an orphan process:\n");
+create
+_
+orphan
+_process();
+printf("\nParent-child scenario:\n");
+parent
+_
+child
+_
+scenario();
+return 0;
+}
