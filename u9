@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <signal.h>
+void sig_
+handler(int signum) {
+printf("Received signal: %d\n"
+, signum);
+}
+int main() {
+struct sigaction sa;
+sigset
+_
+t old
+_
+mask, new
+_
+mask;
+sa.sa
+_
+handler = sig_
+handler;
+sigemptyset(&sa.sa
+_
+mask);
+sa.sa
+_
+flags = 0;
+if (sigaction(SIGINT, &sa, NULL) == -1) {
+perror("sigaction");
+exit(EXIT
+_
+FAILURE);
+}
+printf("Signal handler registered for SIGINT (Ctrl+C)\n");
+sigemptyset(&new
+_
+mask);
+sigaddset(&new
+_
+mask, SIGINT);
+if (sigprocmask(SIG
+_
+BLOCK, NULL, &old
+_
+mask) == -1) {
+perror("sigprocmask");
+exit(EXIT
+_
+FAILURE);
+}
+if (sigismember(&old
+_
+mask, SIGINT)) {
+printf("SIGINT is already present in the signal mask.\n");
+} else {
+if (sigprocmask(SIG
+_
+BLOCK, &new
+_
+mask, NULL) == -1) {
+perror("sigprocmask");
+exit(EXIT
+_
+FAILURE);
+}
+printf("Added SIGINT to the signal mask.\n");
+}
+while (1) {
+sleep(1);
+}
+return 0;
+}
